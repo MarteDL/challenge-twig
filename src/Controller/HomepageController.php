@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -22,6 +23,10 @@ class HomepageController extends AbstractController
 
         $form = $this->createFormBuilder()
             ->add('message', TextType::class)
+            ->add('transformStyle', ChoiceType::class, ['choices' => [
+                'capitalize' => new Capitalize(),
+                'spaces become dashes' => new SpacesToDashes()
+            ]])
             ->add('save', SubmitType::class, ['label' => 'Log message'])
             ->getForm();
 
@@ -31,11 +36,10 @@ class HomepageController extends AbstractController
 
             $data = $form->getData();
             $logger = new InfoLogger();
-            $transformClass = new SpacesToDashes();
 
             $master = new Master();
             $message = $master->messageHandler($data['message'],
-                $transformClass, $logger);
+                $data['transformStyle'], $logger);
         }
 
         return $this->render('homepage/index.html.twig', [
