@@ -3,15 +3,15 @@
 
 namespace App\Class;
 
-use App\Interface\logger;
 use App\Interface\transform;
+use Monolog\Logger;
 
 class Master
 {
-    public function messageHandler(string $input, transform $transformClass, logger $logger):
+    public function messageHandler(string $message, transform $transformClass, Logger $logger):
     string
     {
-        $logger->log($input);
-        return $transformClass->transform($input);
+        $logger->info($message);
+        return $transformClass->transform($message);
     }
 }

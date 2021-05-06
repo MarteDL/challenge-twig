@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Class\Capitalize;
-use App\Class\InfoLogger;
 use App\Class\Master;
 use App\Class\SpacesToDashes;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class HomepageController extends AbstractController
 {
@@ -20,6 +21,9 @@ class HomepageController extends AbstractController
     public function index(Request $request): Response
     {
         $message = 'Your transformed message will be displayed here.';
+        $logger = new Logger('my_logger');
+        $logger->pushHandler(new StreamHandler(__DIR__.'/info.log',
+            Logger::INFO));
 
         $form = $this->createFormBuilder()
             ->add('message', TextType::class)
@@ -35,9 +39,8 @@ class HomepageController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $data = $form->getData();
-            $logger = new InfoLogger();
-
             $master = new Master();
+
             $message = $master->messageHandler($data['message'],
                 $data['transformStyle'], $logger);
         }
