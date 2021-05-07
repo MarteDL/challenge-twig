@@ -1,4 +1,4 @@
-# Title: Dependency Injection Project
+# Title: Dependency Injection Challenge
 
 ## Learning objectives
 - Understand the value of a Dependency Injection Layer
